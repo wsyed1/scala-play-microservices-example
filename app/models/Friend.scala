@@ -1,28 +1,20 @@
 package models
 
+import models.dao.FriendDAO
 
-import javax.inject.Inject
-
-import models.dao._
-import play.api.{Configuration, Play}
-
-import scala.concurrent.{ExecutionContext, Future}
-
-
+import scala.concurrent.Future
 
 /**
-  * Created by 901124 on 10/19/16.
+  * Created by 901124 on 10/21/16.
   */
+object Friend {
 
-class Friend @Inject() (friendDAO: FriendDAO) {
 
-//  val friendDAO = new FriendDAO(ws = WS)
+  def findAllFriends(userId: Int): List[Friend] ={
 
-  def findAllFriends(userId: Int) (implicit ec: ExecutionContext): Future[Set[Friend]] ={
-
-    friendDAO.index(userId).map(_.toSet)
-}
+    FriendDAO.index(userId)
+  }
 
 }
 
-//case class Friend(userId: Int)
+case class Friend(friendId: Int)

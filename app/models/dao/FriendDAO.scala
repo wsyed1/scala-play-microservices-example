@@ -1,32 +1,57 @@
 package models.dao
 
-import com.google.inject.{Inject, Singleton}
-import com.typesafe.config.ConfigFactory
-import scala.concurrent._
-import models.Friend
-import play.api.libs.ws._
+import java.sql.{Connection, DriverManager}
 
+import com.typesafe.config.ConfigFactory
+import models.{FavouriteStudio, Friend}
+
+import scala.collection.mutable.ListBuffer
+import scala.concurrent.Future
 
 /**
-  * Created by 901124 on 10/19/16.
+  * Created by 901124 on 10/21/16.
   */
+object FriendDAO {
 
-class FriendDAO @Inject()  (ws: WSClient, friend: Friend) {
+  private final val mysql = ConfigFactory.load getConfig "mysql"
+  private final val url = mysql getString("url")
+  private final val driver = mysql getString("driver")
+  private final val username = mysql getString("username")
+  private final val password = mysql getString("password")
+  private var connection:Connection = _
+  getConnection
 
-  private final val backend = ConfigFactory.load getConfig "backend"
-  private final val friendServiceUrl = backend getString("service.backend.url") + "/friends"
 
+  def index(userId: Int) : List[Friend] = {
 
-  def index(userId: Int)(implicit ec: ExecutionContext): Future[List[Friend]] = {
-    val holder: WSRequest = ws.url(friendServiceUrl).withQueryString("userId" -> userId.toString)
-    val fResponse = holder.get()
-    fResponse.map { response =>
+    val conn: Connection = DriverManager.getConnection(url, username, password)
+    val ps = conn.prepareStatement("Select userId, friends FROM `favourites-svc`.`users` WHERE userId =?")
+    ps.setString(1, userId.toString)
+    val rs = ps.executeQuery()
 
-      val friendsIds: List[Int] = (response.json \ "result" \\ "friendId").map(_.as[Int]).toList
+    var friends = new ListBuffer[Friend]()
 
-      friendsIds.map(friendsIds => friend)
+    while (rs.next()) {
+      friends.+=(new Friend(rs.getString("friends").toInt))
     }
+
+    friends.toList
+
   }
 
 
+  private def getConnection(): Unit ={
+    if(connection == null) {
+      try{
+        Class.forName(driver)
+        connection = DriverManager.getConnection(url, username, password)
+      } catch {
+        case e: Exception => e.printStackTrace
+      }
+    }
+  }
+
+  private def closeConnection(): Unit ={
+    connection = null;
+  }
 }

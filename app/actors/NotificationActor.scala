@@ -1,7 +1,7 @@
 package actors
 
 import akka.actor._
-import models.{FavouriteNotification, FavouriteStudio, Friend, FriendTest}
+import models.{FavouriteNotification, FavouriteStudio, Friend}
 
 /**
   * Created by 901124 on 10/19/16.
@@ -19,7 +19,7 @@ class NotificationActor extends Actor {
 }
   private def notifyFriends(favourite: FavouriteStudio): Unit ={
 
-    val fFriends = FriendTest.findAllFriends(favourite.userId)
+    val fFriends = Friend.findAllFriends(favourite.userId)
 
     for (
       friends <- fFriends;

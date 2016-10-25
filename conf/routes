@@ -16,4 +16,4 @@ POST    /users/:userId/favouriteStudios/:studioId                   controllers.
 DELETE  /users/:userId/favouriteStudios/:studioId                   controllers.FavouriteStudios.remove(userId: Int, studioId: Int)
 GET     /users/:userId/favouriteStudios/:studioId                   controllers.FavouriteStudios.find(userId: Int, studioId: Int)
 GET     /users/:userId/favouriteStudios                             controllers.FavouriteStudios.findAll(userId: Int)
-GET     /friends/userId/:userId                                     controllers.FriendsTest.findAll(userId: Int)
+GET     /friends/userId/:userId                                     controllers.Friends.findAll(userId: Int)

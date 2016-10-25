@@ -1,23 +1,19 @@
 package controllers
 
-import javax.inject.Inject
-
 import models.Friend
 import play.api.libs.json.Json
-import play.api.mvc._
-
-import scala.concurrent.ExecutionContext
+import play.api.mvc.{Action, Controller}
 
 
 /**
   * Created by 901124 on 10/21/16.
   */
-class Friends @Inject() (friend: Friend) extends Controller{
+class Friends extends Controller{
 
-  def findAll(userId: Int)(implicit ec: ExecutionContext) = Action {
-    val allFriends = friend.findAllFriends(userId)
+  def findAll(userId: Int) = Action {
+    val allFriends = Friend.findAllFriends(userId)
 
-    Ok(Json.obj("result" -> allFriends.toString))
+    Ok(Json.obj("result" -> allFriends.toString()))
 
   }
 }
