@@ -21,7 +21,11 @@ object FriendDAO {
   private var connection:Connection = _
   getConnection
 
-
+  /**
+    * Fetches a list of friends associated with this userId
+    * @param userId The id of the user to find friends of
+    * @return A list of friends associated with the specific user
+    */
   def index(userId: Int) : List[Friend] = {
 
     val conn: Connection = DriverManager.getConnection(url, username, password)
@@ -31,6 +35,7 @@ object FriendDAO {
 
     var friends = new ListBuffer[Friend]()
 
+    //Parse the result set to a List[Object]
     while (rs.next()) {
       friends.+=(new Friend(rs.getString("friends").toInt))
     }
